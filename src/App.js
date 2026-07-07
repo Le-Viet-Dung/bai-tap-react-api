@@ -5,10 +5,10 @@ function App() {
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    // Gọi API lấy dữ liệu mẫu hiển thị ở Content
+    // Gọi API lấy dữ liệu thực tế đổ vào Content theo yêu cầu đề bài
     axios.get('https://jsonplaceholder.typicode.com/users')
       .then(response => {
-        // Lấy tạm phần tử đầu tiên giống mẫu của cô (John Doe / ID: 1)
+        // Lấy 3 người dùng đầu tiên từ API để danh sách nhìn phong phú
         setUsers(response.data.slice(0, 3)); 
       })
       .catch(error => console.error(error));
@@ -17,17 +17,22 @@ function App() {
   return (
     <div style={{ margin: 0, padding: 0, fontFamily: 'Arial, sans-serif', color: '#333' }}>
       
-      {/* 1. HEADER */}
-      <header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 50px', backgroundColor: '#f8f9fa', borderBottom: '1px solid #ddd' }}>
-        <div style={{ fontSize: '20px', fontWeight: 'bold' }}>MY APP</div>
-        <nav style={{ display: 'flex', gap: '20px' }}>
-          <span style={{ color: '#666', cursor: 'pointer' }}>Home</span>
-          <span style={{ color: '#666', cursor: 'pointer' }}>Link</span>
-          <span style={{ color: '#666', cursor: 'pointer' }}>Options ▾</span>
-        </nav>
+      {/* 1. HEADER (Đầy đủ menu như ảnh mẫu) */}
+      <header style={{ 
+        display: 'flex', 
+        alignItems: 'center', 
+        gap: '30px', 
+        padding: '15px 20px', 
+        backgroundColor: '#f8f9fa', 
+        borderBottom: '1px solid #ddd' 
+      }}>
+        <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#333', marginRight: '10px' }}>MY APP</div>
+        <span style={{ color: '#555', cursor: 'pointer', fontSize: '15px' }}>Home</span>
+        <span style={{ color: '#555', cursor: 'pointer', fontSize: '15px' }}>Link</span>
+        <span style={{ color: '#555', cursor: 'pointer', fontSize: '15px' }}>Options ▾</span>
       </header>
 
-      {/* 2. BANNER */}
+      {/* 2. BANNER (Màu xanh ngọc gradient chuẩn bài) */}
       <div style={{ 
         height: '250px', 
         background: 'linear-gradient(135deg, #008080 0%, #20b2aa 50%, #e0ffff 100%)', 
@@ -47,8 +52,8 @@ function App() {
         </div>
       </div>
 
-      {/* 3. CONTENT (Fetch API / Axios) */}
-      <div style={{ padding: '0 0 40px 0' }}>
+      {/* 3. CONTENT (Bảng hiển thị dữ liệu tĩnh kèm dữ liệu Axios) */}
+      <div style={{ paddingBottom: '40px' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
           <thead>
             <tr style={{ borderBottom: '2px solid #ddd', backgroundColor: '#fff' }}>
@@ -58,13 +63,13 @@ function App() {
             </tr>
           </thead>
           <tbody>
-            {/* Dòng dữ liệu giống hệt mẫu của cô */}
+            {/* Dòng dữ liệu John Doe cố định giống y hệt mẫu của cô */}
             <tr style={{ borderBottom: '1px solid #eee', backgroundColor: '#f9f9f9' }}>
               <td style={{ padding: '12px 20px' }}>John Doe</td>
               <td style={{ padding: '12px 20px' }}>1</td>
               <td style={{ padding: '12px 20px' }}>Active</td>
             </tr>
-            {/* Các dòng động load từ API bổ sung cho phong phú */}
+            {/* Vòng lặp map dữ liệu động trả về từ Axios */}
             {users.map(user => (
               <tr key={user.id} style={{ borderBottom: '1px solid #eee' }}>
                 <td style={{ padding: '12px 20px' }}>{user.name}</td>
@@ -76,8 +81,15 @@ function App() {
         </table>
       </div>
 
-      {/* 4. FOOTER */}
-      <footer style={{ textAlign: 'center', padding: '20px', fontSize: '14px', color: '#555', borderTop: '1px solid #eee', marginTop: '20px' }}>
+      {/* 4. FOOTER (Ghim ngay ngắn ở giữa) */}
+      <footer style={{ 
+        textAlign: 'center', 
+        padding: '20px', 
+        fontSize: '14px', 
+        color: '#555', 
+        borderTop: '1px solid #eee', 
+        marginTop: '20px' 
+      }}>
         📍Hanoi, August 2026
       </footer>
 
