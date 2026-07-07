@@ -3,21 +3,39 @@ import axios from 'axios';
 
 function App() {
   const [users, setUsers] = useState([]);
+  // State quản lý vị trí slide hiện tại (0: Sáng, 1: Chiều, 2: Tối)
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  // Danh sách nội dung các slide trượt
+  const slides = [
+    { title: "Good Morning", subtitle: "Cybers and Spaces.", bg: "linear-gradient(135deg, #008080 0%, #20b2aa 50%, #e0ffff 100%)" },
+    { title: "Good Afternoon", subtitle: "Spaces and Cybers.", bg: "linear-gradient(135deg, #007070 0%, #00a8a8 50%, #b2faf2 100%)" },
+    { title: "Good Evening", subtitle: "Welcome to React.", bg: "linear-gradient(135deg, #005757 0%, #008080 50%, #83e8dd 100%)" }
+  ];
 
   useEffect(() => {
-    // Gọi API lấy dữ liệu thực tế đổ vào Content theo yêu cầu đề bài
+    // Gọi API lấy dữ liệu thực tế đổ vào bảng
     axios.get('https://jsonplaceholder.typicode.com/users')
       .then(response => {
-        // Lấy 3 người dùng đầu tiên từ API để danh sách nhìn phong phú
         setUsers(response.data.slice(0, 3)); 
       })
       .catch(error => console.error(error));
   }, []);
 
+  // Hàm xử lý khi bấm nút mũi tên sang trái
+  const prevSlide = () => {
+    setCurrentSlide((prev) => (prev === 0 ? slides.length - 1 : prev - 1));
+  };
+
+  // Hàm xử lý khi bấm nút mũi tên sang phải
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
+  };
+
   return (
-    <div style={{ margin: 0, padding: 0, fontFamily: 'Arial, sans-serif', color: '#333' }}>
+    <div style={{ margin: 0, padding: 0, fontFamily: 'Arial, sans-serif', color: '#333', userSelect: 'none' }}>
       
-      {/* 1. HEADER (Đầy đủ menu như ảnh mẫu) */}
+      {/* 1. HEADER */}
       <header style={{ 
         display: 'flex', 
         alignItems: 'center', 
@@ -32,27 +50,66 @@ function App() {
         <span style={{ color: '#555', cursor: 'pointer', fontSize: '15px' }}>Options ▾</span>
       </header>
 
-      {/* 2. BANNER (Màu xanh ngọc gradient chuẩn bài) */}
+      {/* 2. BANNER TỰ CHẾ MŨI TÊN TRƯỢT (Không lỗi thư viện) */}
       <div style={{ 
         height: '250px', 
-        background: 'linear-gradient(135deg, #008080 0%, #20b2aa 50%, #e0ffff 100%)', 
+        background: slides[currentSlide].bg, 
         display: 'flex', 
         flexDirection: 'column',
         justifyContent: 'center', 
         alignItems: 'center', 
         color: '#fff',
-        textAlign: 'center'
+        textAlign: 'center',
+        position: 'relative',
+        transition: 'background 0.5s ease'
       }}>
-        <h1 style={{ fontSize: '36px', margin: '0 0 10px 0', fontWeight: 'normal' }}>Good Morning</h1>
-        <p style={{ fontSize: '16px', margin: 0, opacity: 0.8 }}>Cybers and Spaces.</p>
+        {/* Mũi tên TRÁI (<) */}
+        <div 
+          onClick={prevSlide}
+          style={{
+            position: 'absolute', left: '30px', top: '50%', transform: 'translateY(-50%)',
+            fontSize: '40px', color: 'rgba(255,255,255,0.6)', cursor: 'pointer', fontWeight: '100'
+          }}
+          onMouseEnter={(e) => e.target.style.color = '#fff'}
+          onMouseLeave={(e) => e.target.style.color = 'rgba(255,255,255,0.6)'}
+        >
+          ‹
+        </div>
+
+        {/* Nội dung Banner */}
+        <h1 style={{ fontSize: '36px', margin: '0 0 10px 0', fontWeight: 'normal' }}>{slides[currentSlide].title}</h1>
+        <p style={{ fontSize: '16px', margin: 0, opacity: 0.8 }}>{slides[currentSlide].subtitle}</p>
+        
+        {/* Dấu gạch đường trượt (Dấu chấm chuyển trang) */}
         <div style={{ display: 'flex', gap: '5px', marginTop: '20px' }}>
-          <div style={{ width: '20px', height: '3px', backgroundColor: '#fff' }}></div>
-          <div style={{ width: '20px', height: '3px', backgroundColor: 'rgba(255,255,255,0.4)' }}></div>
-          <div style={{ width: '20px', height: '3px', backgroundColor: 'rgba(255,255,255,0.4)' }}></div>
+          {slides.map((_, index) => (
+            <div 
+              key={index}
+              onClick={() => setCurrentSlide(index)}
+              style={{ 
+                width: '20px', height: '3px', cursor: 'pointer',
+                backgroundColor: currentSlide === index ? '#fff' : 'rgba(255,255,255,0.4)',
+                transition: 'background 0.3s'
+              }}
+            ></div>
+          ))}
+        </div>
+
+        {/* Mũi tên PHẢI (>) */}
+        <div 
+          onClick={nextSlide}
+          style={{
+            position: 'absolute', right: '30px', top: '50%', transform: 'translateY(-50%)',
+            fontSize: '40px', color: 'rgba(255,255,255,0.6)', cursor: 'pointer', fontWeight: '100'
+          }}
+          onMouseEnter={(e) => e.target.style.color = '#fff'}
+          onMouseLeave={(e) => e.target.style.color = 'rgba(255,255,255,0.6)'}
+        >
+          ›
         </div>
       </div>
 
-      {/* 3. CONTENT (Bảng hiển thị dữ liệu tĩnh kèm dữ liệu Axios) */}
+      {/* 3. CONTENT (Bảng hiển thị) */}
       <div style={{ paddingBottom: '40px' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
           <thead>
@@ -63,13 +120,11 @@ function App() {
             </tr>
           </thead>
           <tbody>
-            {/* Dòng dữ liệu John Doe cố định giống y hệt mẫu của cô */}
             <tr style={{ borderBottom: '1px solid #eee', backgroundColor: '#f9f9f9' }}>
               <td style={{ padding: '12px 20px' }}>John Doe</td>
               <td style={{ padding: '12px 20px' }}>1</td>
               <td style={{ padding: '12px 20px' }}>Active</td>
             </tr>
-            {/* Vòng lặp map dữ liệu động trả về từ Axios */}
             {users.map(user => (
               <tr key={user.id} style={{ borderBottom: '1px solid #eee' }}>
                 <td style={{ padding: '12px 20px' }}>{user.name}</td>
@@ -81,14 +136,10 @@ function App() {
         </table>
       </div>
 
-      {/* 4. FOOTER (Ghim ngay ngắn ở giữa) */}
+      {/* 4. FOOTER */}
       <footer style={{ 
-        textAlign: 'center', 
-        padding: '20px', 
-        fontSize: '14px', 
-        color: '#555', 
-        borderTop: '1px solid #eee', 
-        marginTop: '20px' 
+        textAlign: 'center', padding: '20px', fontSize: '14px', color: '#555', 
+        borderTop: '1px solid #eee', marginTop: '20px' 
       }}>
         📍Hanoi, August 2026
       </footer>
